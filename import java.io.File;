@@ -1,0 +1,119 @@
+import java.io.File;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+/**
+ * ICS3U
+ * @author Becky Jeong 
+ * Mr. Benum 
+ * Jan 23rd 
+ * Five in a Row(GOMOKU) 
+ * Traditionally played with Go pieces on a Go board. It can be played using 15 x 15 board.
+ * resource: https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
+ */
+public class Board11 {
+	static final int ROWS = 15;
+	static final int COLS = 15;
+	//number of rows and columns
+	static final String[] playerColours = { "", "black", "white" };
+	//stores the colour of the players
+	static Coordinate myCoordinate;
+	static int[][] pegArray = new int[ROWS][COLS];
+	static boolean win = false;
+	static int player = 2;
+	/**
+	 * main game
+	 * each player stones on the board until they make a line with five stones
+	 * they cannot place their stones over other stones - show error message, do not switch player
+	 * display message if player has formed a line with five stones 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Icon icon = new ImageIcon("#NEW #iOS #APP Dr_ Gomoku - SUD Inc.jpeg");
+		//image file 
+		String file = "<html>" + "<h1 style=\"color: #5e9ca0;\">Five in line(Gomoku)</h1>"
+				+ "<p><strong>Welcome to <em>Five In Line</em>!</strong></p>"
+				+ "<p><em>Five in line</em> or <em>Gomoku</em> is a traditional oriental game, originally from China. In Japanese language Go means five, and moku pieces(or eyes or dots).</p>"
+				+ "<h2 style=\"color: #2e6c80;\">How to play this game:</h2>" + "<ul>"
+				+ "<li><strong>Black plays first</strong>, and players alternate in placeing a stone of their colour on an empty intersection.</li>"
+				+ "<li>The winner is the first player to get an unbroken row of five sones <strong>horizontally, vertically, or diagonally</strong>.</li>"
+				+ "<li>Player <strong>one</strong> has the <strong>black</strong> stone and player <strong>two</strong> has the <strong>white</strong> stone</li>"
+				+ "<li>Click on the board to place your stone.&nbsp;</li>"
+				+ "<li>You <strong>cannot</strong> place it on other stone.</li>" + "</ul>" + "<p>&nbsp;</p>"
+				+ "</html>";
+		//describtion
+		JOptionPane.showMessageDialog(null, file, "WELCOME", JOptionPane.PLAIN_MESSAGE, icon);
+		//display message
+		Board b = new Board(ROWS, COLS);
+		//create board
+		// main game loop
+		while (!win) {
+			// switch player after checking for win 
+			if (player == 1) {
+				player = 2;
+			} else {
+				player = 1;
+			}
+			b.displayMessage("Player " + player);
+			myCoordinate = b.getClick();
+			if (pegArray[myCoordinate.getRow()][myCoordinate.getCol()] == 0) {
+				//place stone when it's empty
+				b.putPeg(playerColours[player], myCoordinate.getRow(), myCoordinate.getCol());
+				pegArray[myCoordinate.getRow()][myCoordinate.getCol()] = player;
+				win = winHorizontal(player);
+			} else { //if they place their stones over others' 
+				JOptionPane.showMessageDialog(null, "You cannot place your stone here","WARNING", JOptionPane.ERROR_MESSAGE);
+				if (player == 1) {	//don't switch player
+					player = 2;
+				} else {
+					player = 1;
+				}
+			}
+		}
+		// display winning announcement
+		b.displayMessage("Congratulation! Player " + player + " wins!");
+	}
+	
+	/**
+	 * checks if the player has formed a line with five stones vertically, horizontally or diagonally
+	 * checks every rows and columns
+	 * @param player
+	 * @return if player wins return true
+	 */
+	public static boolean winHorizontal(int player) {
+		for (int r = 0; r < ROWS; r++) { //checkes every row
+			for (int c = 0; c < COLS; c++) { // checks every columns
+				if (pegArray[r][c] == player && pegArray[r][c] == pegArray[r][c + 1]
+						&& pegArray[r][c] == pegArray[r][c + 2] && pegArray[r][c] == pegArray[r][c + 3]
+						&& pegArray[r][c] == pegArray[r][c + 4]) {
+					return true;
+					//checks horizontally
+				} else if (pegArray[r][c] == player && pegArray[r][c] == pegArray[r + 1][c]
+						&& pegArray[r][c] == pegArray[r + 2][c] && pegArray[r][c] == pegArray[r + 3][c]
+						&& pegArray[r][c] == pegArray[r + 4][c]) {
+					return true;
+					//checks vertically
+
+				} else if (pegArray[r][c] == player && pegArray[r][c] == pegArray[r + 1][c + 1]
+						&& pegArray[r][c] == pegArray[r + 2][c + 2] && pegArray[r][c] == pegArray[r + 3][c + 3]
+						&& pegArray[r][c] == pegArray[r + 4][c + 4]) {
+					return true;
+					// check diagonally
+				} else if (pegArray[r][c] == player && pegArray[r][c] == pegArray[r + 1][c - 1]
+						&& pegArray[r][c] == pegArray[r + 2][c - 2] && pegArray[r][c] == pegArray[r + 3][c - 3]
+						&& pegArray[r][c] == pegArray[r + 4][c - 4]) {
+					return true;
+					//check diagonally 2
+				}
+			}
+
+		}
+		return false;
+		// if it does not meet the requirements, it returns false
+
+	}
+}
+
+	
